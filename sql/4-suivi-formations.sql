@@ -1,16 +1,11 @@
--- =========================
--- PARAMETRES GLOBAUX
--- Modifie seulement cette valeur
--- =========================
+-- parametres pour les requetes
 DROP TABLE IF EXISTS _params_formation;
 CREATE TEMP TABLE _params_formation (
     formation_id INT
 );
 INSERT INTO _params_formation VALUES (1);
 
--- =========================
--- Q1 : Modules composant une formation
--- =========================
+--q1
 SELECT
     f.formation_intitule    AS formation,
     c.ordre,
@@ -25,9 +20,7 @@ CROSS JOIN _params_formation p
 WHERE c.formation_id = p.formation_id
 ORDER BY c.ordre;
 
--- =========================
--- Q2 : Modules avec le plus grand nombre d inscrits
--- =========================
+--q2
 SELECT
     m.module_intitule                   AS module,
     COUNT(DISTINCT i.etudiant_id)       AS nb_inscrits
@@ -37,9 +30,7 @@ JOIN inscription i ON i.formation_id = c.formation_id
 GROUP BY m.module_id, m.module_intitule
 ORDER BY nb_inscrits DESC;
 
--- =========================
--- Q3 : Formations sans aucun etudiant inscrit
--- =========================
+--q3
 SELECT
     f.formation_id,
     f.formation_intitule,
@@ -52,9 +43,7 @@ WHERE NOT EXISTS (
 )
 ORDER BY f.formation_intitule;
 
--- =========================
--- Q4 : Duree prevue vs duree effective par formation
--- =========================
+--q4
 WITH durees AS (
     SELECT
         c.formation_id,

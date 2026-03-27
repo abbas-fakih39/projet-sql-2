@@ -1,7 +1,4 @@
--- =========================
--- PARAMETRES GLOBAUX
--- Modifie seulement ces valeurs
--- =========================
+-- parametres pour les requetes
 DROP TABLE IF EXISTS _params_reporting;
 CREATE TEMP TABLE _params_reporting (
     seuil_alerte    NUMERIC,   -- moyenne min avant alerte formation
@@ -12,9 +9,7 @@ CREATE TEMP TABLE _params_reporting (
 );
 INSERT INTO _params_reporting VALUES (12, 30, 16, 12, 10);
 
--- =========================
--- Q1 : Comptages globaux
--- =========================
+--q1
 SELECT
     (SELECT COUNT(*) FROM etudiant)    AS nb_etudiants,
     (SELECT COUNT(*) FROM formation)   AS nb_formations,
@@ -23,9 +18,7 @@ SELECT
     (SELECT COUNT(*) FROM inscription) AS nb_inscriptions,
     (SELECT COUNT(*) FROM evaluation)  AS nb_evaluations;
 
--- =========================
--- Q2 : Moyenne generale par formation
--- =========================
+--q2
 WITH stats AS (
     SELECT
         i.formation_id,
@@ -47,9 +40,7 @@ FROM stats s
 JOIN formation f ON f.formation_id = s.formation_id
 ORDER BY s.moyenne DESC;
 
--- =========================
--- Q3 : Repartition des etudiants par statut
--- =========================
+--q3
 SELECT
     i.inscription_statut                                        AS statut,
     COUNT(*)                                                    AS nb,
@@ -58,9 +49,7 @@ FROM inscription i
 GROUP BY i.inscription_statut
 ORDER BY nb DESC;
 
--- =========================
--- Q4 : Moyenne par formation ET par module
--- =========================
+--q4
 WITH moyennes AS (
     SELECT
         i.formation_id,
@@ -81,9 +70,7 @@ JOIN formation f ON f.formation_id = mo.formation_id
 JOIN module_   m ON m.module_id    = mo.module_id
 ORDER BY f.formation_intitule, mo.moyenne ASC;
 
--- =========================
--- Q5 : Nombre d inscrits par formation et par annee
--- =========================
+--q5
 SELECT
     f.formation_annee,
     f.formation_intitule            AS formation,
@@ -93,9 +80,7 @@ LEFT JOIN inscription i ON i.formation_id = f.formation_id
 GROUP BY f.formation_id, f.formation_annee, f.formation_intitule
 ORDER BY f.formation_annee, nb_inscrits DESC;
 
--- =========================
--- Q6 : Evolution des inscriptions par mois avec cumul
--- =========================
+--q6
 WITH par_mois AS (
     SELECT
         TO_CHAR(inscription_date, 'YYYY-MM') AS mois,
@@ -110,9 +95,7 @@ SELECT
 FROM par_mois
 ORDER BY mois;
 
--- =========================
--- Q7 : Classement etudiants par categorie (CASE WHEN)
--- =========================
+--q7
 WITH moyennes AS (
     SELECT
         i.etudiant_id,
@@ -136,9 +119,7 @@ JOIN etudiant e ON e.etudiant_id = m.etudiant_id
 CROSS JOIN _params_reporting p
 ORDER BY m.moyenne DESC;
 
--- =========================
--- Q8 : Formations avec moyenne inferieure au seuil d alerte
--- =========================
+--q8
 WITH moyennes_formation AS (
     SELECT
         i.formation_id,
@@ -157,9 +138,7 @@ WHERE mf.moyenne IS NULL
     OR mf.moyenne < p.seuil_alerte
 ORDER BY mf.moyenne ASC;
 
--- =========================
--- Q9 : Modules a risque (taux echec >= seuil)
--- =========================
+--q9
 WITH stats_module AS (
     SELECT
         ev.module_id,
@@ -179,9 +158,7 @@ CROSS JOIN _params_reporting p
 WHERE s.nb_echecs * 100.0 / s.nb_evaluations >= p.seuil_risque
 ORDER BY taux_echec_pct DESC;
 
--- =========================
--- Q10 : Classement par formation (RANK)
--- =========================
+--q10
 WITH moyennes AS (
     SELECT
         i.formation_id,

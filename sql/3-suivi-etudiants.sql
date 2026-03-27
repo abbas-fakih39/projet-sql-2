@@ -1,5 +1,5 @@
--- =========================
--- PARAMETRES GLOBAUX
+
+-- parametres pour les requetes
 -- Modifie seulement ces 3 valeurs
 -- =========================
 DROP TABLE IF EXISTS _params;
@@ -12,9 +12,7 @@ CREATE TEMP TABLE _params (
 INSERT INTO _params (formation_id, etudiant_id, module_id)
 VALUES (1, 1, 2);
 
--- =========================
--- Q1 : Etudiants inscrits a une formation
--- =========================
+--q1
 SELECT
     e.etudiant_id,
     e.etudiant_nom,
@@ -28,9 +26,7 @@ CROSS JOIN _params p
 WHERE i.formation_id = p.formation_id
 ORDER BY e.etudiant_nom, e.etudiant_prenom;
 
--- =========================
--- Q2 : Parcours complet d un etudiant
--- =========================
+--q2
 SELECT
     e.etudiant_nom || ' ' || e.etudiant_prenom AS etudiant,
     f.formation_intitule                        AS formation,
@@ -47,9 +43,7 @@ CROSS JOIN _params p
 WHERE e.etudiant_id = p.etudiant_id
 ORDER BY f.formation_intitule, m.module_intitule, ev.evaluation_date;
 
--- =========================
--- Q3 : Etudiants sans note dans un module donne
--- =========================
+--q3
 SELECT
     e.etudiant_id,
     e.etudiant_nom,
@@ -68,9 +62,7 @@ WHERE i.formation_id = p.formation_id
   )
 ORDER BY e.etudiant_nom, e.etudiant_prenom;
 
--- =========================
--- Q4 : Etudiants en echec (statut echec OU moyenne < 10)
--- =========================
+--q4
 WITH moyennes AS (
     SELECT
         i.inscription_id,
@@ -95,9 +87,7 @@ WHERE m.inscription_statut = 'echec'
    OR m.moyenne < 10
 ORDER BY m.moyenne ASC NULLS LAST;
 
--- =========================
--- Q5 : Etudiants en reussite (statut reussite ET moyenne >= 10)
--- =========================
+-q5
 WITH moyennes AS (
     SELECT
         i.inscription_id,

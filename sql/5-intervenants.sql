@@ -1,16 +1,11 @@
--- =========================
--- PARAMETRES GLOBAUX
--- Modifie seulement cette valeur
--- =========================
+-- parametres pour les requetes
 DROP TABLE IF EXISTS _params_intervenant;
 CREATE TEMP TABLE _params_intervenant (
     intervenant_id INT
 );
 INSERT INTO _params_intervenant VALUES (1);
 
--- =========================
--- Q1 : Modules animes par un intervenant
--- =========================
+--q1
 SELECT
     iv.intervenant_nom || ' ' || iv.intervenant_prenom  AS intervenant,
     m.module_intitule                                    AS module,
@@ -22,9 +17,7 @@ CROSS JOIN _params_intervenant p
 WHERE a.intervenant_id = p.intervenant_id
 ORDER BY m.module_intitule;
 
--- =========================
--- Q2 : Intervenants avec le plus de modules
--- =========================
+--q2
 WITH charge AS (
     SELECT
         a.intervenant_id,
@@ -40,9 +33,7 @@ FROM intervenant iv
 LEFT JOIN charge c ON c.intervenant_id = iv.intervenant_id
 ORDER BY nb_modules DESC;
 
--- =========================
--- Q3 : Modules sans intervenant affecte
--- =========================
+--q3
 SELECT
     m.module_id,
     m.module_intitule   AS module,

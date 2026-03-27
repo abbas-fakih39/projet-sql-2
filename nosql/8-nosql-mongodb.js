@@ -1,14 +1,7 @@
-// ============================================================
-// 08_nosql_mongodb.js
-// Partie 6 - Ouverture NoSQL - MongoDB
-// Base : formation_nosql
-// Lancer avec : mongosh formation_nosql 08_nosql_mongodb.js
-// ============================================================
+db.logs.drop();
+db.commentaires.drop();
+db.evaluations_libres.drop();
 
-// ============================================================
-// 1. LOGS - Traçabilité des actions utilisateurs
-// Stocke chaque action effectuée sur le système
-// ============================================================
 db.logs.insertMany([
   {
     timestamp: new Date("2025-01-15T08:32:00Z"),
@@ -66,10 +59,7 @@ db.logs.insertMany([
   }
 ]);
 
-// ============================================================
-// 2. COMMENTAIRES - Retours pédagogiques libres
-// Rattachés à un étudiant + module + inscription (via IDs SQL)
-// ============================================================
+
 db.commentaires.insertMany([
   {
     inscription_id: 1,
@@ -127,10 +117,6 @@ db.commentaires.insertMany([
   }
 ]);
 
-// ============================================================
-// 3. EVALUATIONS LIBRES - Feedbacks qualitatifs des étudiants
-// Les étudiants évaluent les modules (pas de note, texte libre)
-// ============================================================
 db.evaluations_libres.insertMany([
   {
     etudiant_id: 1,
@@ -183,10 +169,6 @@ db.evaluations_libres.insertMany([
     suggestion: "Commencer par les bases des maths avant le ML."
   }
 ]);
-
-// ============================================================
-// REQUETES DE TEST
-// ============================================================
 
 print("\n--- LOGS : toutes les actions ---");
 db.logs.find().forEach(printjson);
